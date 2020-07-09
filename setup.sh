@@ -18,19 +18,19 @@ usage () {
   echo "-m      setup for mac build"
   echo "-w      setup for windows build"
   echo "-l      shiny app requires latex for rendering markdown reports"
-  echo "-d      setup in dev mode, indended for debugging/testing only"
+  echo "-r      specify R version, optional and if not specified pulls latest"
   echo " "
   echo "example:"
   echo ""
   echo "setup -mw"
 }
-while getopts "mwldh" opt;
+while getopts "mwlr:h" opt;
 do
   case ${opt} in
     m) build_mac=1;;
     w) build_win=1;;
     l) add_latex=1;;
-    d) build_for_dev=1;;
+    r) r_version=${OPTARG};;
     h) usage; exit;;
     *) usage; exit;;
   esac
@@ -49,6 +49,12 @@ fi
 if [ -z $add_latex ]
 then
   add_latex=0
+fi
+
+if [ -z $r_version ]
+then
+  echo "Must provide R version, e.g., '4.0.2'"
+  exit 1
 fi
 
 if [[ $build_mac == 0 && $build_win == 0 ]]
@@ -74,7 +80,7 @@ then
   # get R binary for mac if not already pulled
   if [[ ! -f ./r-mac/bin/R ]]
   then
-    ./setup_scripts/get-r-mac.sh
+    ./setup_scripts/get-r-mac.sh $r_version
   else
     echo "R binary already exists for mac or not needed, skipping."
   fi
@@ -97,7 +103,7 @@ then
   # get R binary for mac if not already pulled
   if [[ ! -f ./r-win/bin/x64/R.exe ]]
   then
-    ./setup_scripts/get-r-win.sh
+    ./setup_scripts/get-r-win.sh $r_version
   else
     echo "R binary already exists for win or not needed, skipping."
   fi

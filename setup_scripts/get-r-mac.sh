@@ -1,18 +1,30 @@
 #!/usr/bin/env bash
 set -e
 
+r_version=$1
+
 # Download and extract the main Mac Resources directory
 # Requires xar and cpio, both installed in the Dockerfile
 mkdir -p ./r-mac
 curl -o ./r-mac/latest_r.pkg \
-     https://cloud.r-project.org/bin/macosx/R-4.0.2.pkg
+     https://cloud.r-project.org/bin/macosx/R-$r_version.pkg
 
 cd ./r-mac
 xar -xf latest_r.pkg
-rm -r r-1.pkg Resources tcltk8.pkg texinfo5.pkg Distribution latest_r.pkg
-cat r.pkg/Payload | gunzip -dc | cpio -i
-mv R.framework/Versions/Current/Resources/* .
-rm -r r.pkg R.framework
+
+# R version 4.0.0+ has different .pkg contents
+if [[ ! -f r.pkg ]]
+then
+  rm -r R-app.pkg Resources tcltk.pkg texinfo.pkg Distribution latest_r.pkg
+  cat R-fw.pkg/Payload | gunzip -dc | cpio -i
+  mv R.framework/Versions/Current/Resources/* .
+  rm -r R-fw.pkg R.framework
+else
+  rm -r r-1.pkg Resources tcltk8.pkg texinfo5.pkg Distribution latest_r.pkg
+  cat r.pkg/Payload | gunzip -dc | cpio -i
+  mv R.framework/Versions/Current/Resources/* .
+  rm -r r.pkg R.framework
+fi
 
 # need to make sure R is looking in the right place - packaged electron - for
 # paths, otherwise the app will break unless user installs R on machine; this
