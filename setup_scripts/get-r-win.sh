@@ -5,7 +5,7 @@ set -e
 # Requires innoextract
 mkdir -p ./r-win
 curl -o ./r-win/latest_r.exe \
-  https://cloud.r-project.org/bin/windows/base/old/3.5.3/R-3.5.3-win.exe
+  https://cloud.r-project.org/bin/windows/base/old/4.0.2/R-4.0.2-win.exe
 
 cd ./r-win
 innoextract -e latest_r.exe

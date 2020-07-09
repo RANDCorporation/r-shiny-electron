@@ -5,7 +5,7 @@ set -e
 # Requires xar and cpio, both installed in the Dockerfile
 mkdir -p ./r-mac
 curl -o ./r-mac/latest_r.pkg \
-     https://cloud.r-project.org/bin/macosx/R-3.6.1.pkg
+     https://cloud.r-project.org/bin/macosx/R-4.0.2.pkg
 
 cd ./r-mac
 xar -xf latest_r.pkg
@@ -17,7 +17,7 @@ rm -r r.pkg R.framework
 # need to make sure R is looking in the right place - packaged electron - for
 # paths, otherwise the app will break unless user installs R on machine; this
 # avoids that requirement by forcing R to use the R_HOME path in the env
-# provided by the JS app to the R call (see src/index.js) 
+# provided by the JS app to the R call (see src/index.js)
 sed -i.bak '/^R_HOME_DIR=/d' bin/R
 sed -i.bak 's#/Library/Frameworks/R.framework/Resources#${R_HOME}#g' bin/R
 sed -i.bak '41i\
